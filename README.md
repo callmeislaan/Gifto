@@ -1,3 +1,3 @@
 # Gifto
-https://github.com/callmeislaan/Gifto/assets/50095453/ca3d0319-ba89-4034-b19f-9de997345f0d
+![gifto intro (1)](https://github.com/callmeislaan/Gifto/assets/50095453/03afd716-d89c-4ebb-b50a-9b40722fc384)
 
