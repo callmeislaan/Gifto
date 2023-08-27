@@ -1,0 +1,10 @@
+[workspace]
+members = [
+    "node",
+    "pallets/brands",
+    "pallets/consumers",
+    "pallets/ecosystems",
+    "runtime",
+]
+[profile.release]
+panic = "unwind"
