@@ -15,10 +15,9 @@ pub mod pallet {
     #[pallet::config]
     pub trait Config: frame_system::Config {
         type RuntimeEvent: From<Event<Self>> + IsType<<Self as frame_system::Config>::RuntimeEvent>;
-
         type ConsumerNameLimit: Get<u32>;
-
         type ConsumerLimit: Get<u32>;
+        type ImageLimit: Get<u32>;
     }
 
     #[pallet::pallet]
@@ -50,23 +49,36 @@ pub mod pallet {
 
         #[pallet::call_index(0)]
         #[pallet::weight(10_000)]
-        pub fn update_info(origin: OriginFor<T>, name: Vec<u8>) -> DispatchResult {
+        pub fn update_info(origin: OriginFor<T>, name: Vec<u8>, avatar: Vec<u8>) -> DispatchResult {
             let who = ensure_signed(origin)?;
             
             let bounded_name: ConsumerNameType<T> = name.clone().try_into().expect("name is too long");
-
-            let new_consumer_id = who.clone();
+            let bounded_image: Image<T> = avatar.clone().try_into().expect("name is too long");
 
             Consumers::<T>::try_mutate(&who, |change| {
 				if let Some(consumer) = change {
-					consumer.name = bounded_name;
+					consumer.set_name(bounded_name);
+                    consumer.set_avatar(bounded_image);
 					return Ok(());
 				}
 				Err(())
 			}).map_err(|_| Error::<T>::ConsumerNotFound)?;
 
-            Self::deposit_event(Event::ConsumerUpdated(new_consumer_id));
+            Self::deposit_event(Event::ConsumerUpdated(who.clone()));
             
+            Ok(())
+        }
+
+        #[pallet::call_index(1)]
+        #[pallet::weight(0)]
+        pub fn create(origin: OriginFor<T>, name: Vec<u8>, avatar: Vec<u8>) -> DispatchResult {
+
+            let who = ensure_signed(origin)?;
+            let bounded_name: ConsumerNameType<T> = name.clone().try_into().expect("name is too long");
+            let bounded_avatar: Image<T> = avatar.clone().try_into().expect("avatar is too long");
+            let new_id = who.clone();
+
+
             Ok(())
         }
 

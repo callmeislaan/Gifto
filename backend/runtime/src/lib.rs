@@ -50,6 +50,7 @@ pub use sp_runtime::{Perbill, Permill};
 pub use pallet_brands;
 pub use pallet_consumers;
 pub use pallet_ecosystems;
+pub use pallet_points;
 
 /// An index to a block.
 pub type BlockNumber = u32;
@@ -276,12 +277,14 @@ impl pallet_brands::Config for Runtime {
 	type BrandSymbolLimit = ConstU32<125>;
 	type BrandNameLimit = ConstU32<255>;
 	type BrandLimit = ConstU32<{ u32::MAX }>;
+	type ImageLimit = ConstU32<{ u32::MAX }>;
 }
 
 impl pallet_consumers::Config for Runtime {
 	type RuntimeEvent = RuntimeEvent;
 	type ConsumerNameLimit = ConstU32<255>;
 	type ConsumerLimit = ConstU32<{ u32::MAX }>;
+	type ImageLimit = ConstU32<{ u32::MAX }>;
 }
 
 impl pallet_ecosystems::Config for Runtime {
@@ -289,6 +292,14 @@ impl pallet_ecosystems::Config for Runtime {
 	type EcosystemSymbolLimit = ConstU32<125>;
 	type EcosystemNameLimit = ConstU32<255>;
 	type EcosystemLimit = ConstU32<{ u32::MAX }>;
+}
+
+impl pallet_points::Config for Runtime {
+	type RuntimeEvent = RuntimeEvent;
+	type PointLimit = ConstU32<{ u32::MAX }>;
+	type PointValueLimit = ConstU32<{ u32::MAX }>;
+	type PointSymbolLimit = ConstU32<125>;
+	type ImageLimit = ConstU32<{ u32::MAX }>;
 }
 
 
@@ -306,6 +317,7 @@ construct_runtime!(
 		Brands: pallet_brands,
 		Consumers: pallet_consumers,
 		Ecosystems: pallet_ecosystems,
+		Points: pallet_points,
 	}
 );
 
