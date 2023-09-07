@@ -278,6 +278,8 @@ impl pallet_brands::Config for Runtime {
 	type BrandNameLimit = ConstU32<255>;
 	type BrandLimit = ConstU32<{ u32::MAX }>;
 	type ImageLimit = ConstU32<{ u32::MAX }>;
+	type DescriptionLimit = ConstU32<2000>;
+	type DomainLimit = ConstU32<500>;
 }
 
 impl pallet_consumers::Config for Runtime {
@@ -300,6 +302,7 @@ impl pallet_points::Config for Runtime {
 	type PointValueLimit = ConstU32<{ u32::MAX }>;
 	type PointSymbolLimit = ConstU32<125>;
 	type ImageLimit = ConstU32<{ u32::MAX }>;
+	type DescriptionLimit = ConstU32<2000>;
 }
 
 

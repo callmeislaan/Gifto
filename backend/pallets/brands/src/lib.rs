@@ -13,9 +13,11 @@ pub mod pallet {
     use frame_support::sp_runtime::traits::Hash;
 	use frame_support::dispatch::Vec;
 
-    pub type BrandSymbolType<T> = BoundedVec<u8, <T as Config>::BrandSymbolLimit>;
-    pub type BrandNameType<T> = BoundedVec<u8, <T as Config>::BrandNameLimit>;
+    pub type BrandSymbol<T> = BoundedVec<u8, <T as Config>::BrandSymbolLimit>;
+    pub type BrandName<T> = BoundedVec<u8, <T as Config>::BrandNameLimit>;
     pub type Image<T> = BoundedVec<u8, <T as Config>::ImageLimit>;    
+    pub type Description<T> = BoundedVec<u8, <T as Config>::DescriptionLimit>;
+    pub type Domain<T> = BoundedVec<u8, <T as Config>::DomainLimit>;
 
     #[pallet::config]
     pub trait Config: frame_system::Config {
@@ -24,6 +26,8 @@ pub mod pallet {
         type BrandNameLimit: Get<u32>;
         type BrandLimit: Get<u32>;
         type ImageLimit: Get<u32>;
+        type DescriptionLimit: Get<u32>;
+        type DomainLimit: Get<u32>;
     }
 
     #[pallet::pallet]
@@ -39,7 +43,7 @@ pub mod pallet {
 
     #[pallet::storage]
     #[pallet::getter(fn symbol_brands)]
-    pub type SymbolBrands<T: Config> = StorageMap<_, Blake2_128Concat, BrandSymbolType<T>, T::Hash, OptionQuery, >;
+    pub type SymbolBrands<T: Config> = StorageMap<_, Blake2_128Concat, BrandSymbol<T>, T::Hash, OptionQuery, >;
 
     #[pallet::storage]
     #[pallet::getter(fn brand_owner)]
@@ -48,7 +52,7 @@ pub mod pallet {
     #[pallet::event]
     #[pallet::generate_deposit(pub(super) fn deposit_event)]
     pub enum Event<T: Config> {
-        BrandCreated(T::Hash, BrandSymbolType<T>),
+        BrandCreated(T::Hash, BrandSymbol<T>),
     }
 
     #[pallet::error]
@@ -63,17 +67,19 @@ pub mod pallet {
 
         #[pallet::call_index(0)]
         #[pallet::weight(10_000)]
-        pub fn create_new_brand(origin: OriginFor<T>, symbol: Vec<u8>, name: Vec<u8>, avatar: Vec<u8>) -> DispatchResult {
+        pub fn create_new_brand(origin: OriginFor<T>, symbol: Vec<u8>, name: Vec<u8>, avatar: Vec<u8>, description: Vec<u8>, domain: Vec<u8>) -> DispatchResult {
             let who = ensure_signed(origin)?;
             
-            let bounded_symbol: BrandSymbolType<T> = symbol.clone().try_into().expect("symbol is too long");
-            let bounded_name: BrandNameType<T> = name.clone().try_into().expect("name is too long");
+            let bounded_symbol: BrandSymbol<T> = symbol.clone().try_into().expect("symbol is too long");
+            let bounded_name: BrandName<T> = name.clone().try_into().expect("name is too long");
             let bounded_avatar: Image<T> = avatar.clone().try_into().expect("avatar is too long");  
+            let bounded_description: Description<T> = description.clone().try_into().expect("name is too long");
+            let bounded_domain: Domain<T> = domain.clone().try_into().expect("avatar is too long");  
 
             // ensure brand symbol not duplicate
             ensure!(Self::symbol_brands(bounded_symbol.clone()) == None, <Error<T>>::BrandSymbolExisted);
 
-            let brand = Brand::new(bounded_symbol.clone(), bounded_name.clone(), who.clone(), bounded_avatar.clone());
+            let brand = Brand::new(bounded_symbol.clone(), bounded_name.clone(), who.clone(), bounded_avatar.clone(), bounded_description.clone(), bounded_domain.clone());
             
             let brand_hash = T::Hashing::hash_of(&brand);
 
