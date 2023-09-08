@@ -5,6 +5,7 @@ members = [
     "pallets/consumers",
     "pallets/ecosystems",
     "pallets/points",
+    "pallets/promos",
     "runtime",
 ]
 [profile.release]

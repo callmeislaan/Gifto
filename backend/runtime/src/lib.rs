@@ -51,6 +51,7 @@ pub use pallet_brands;
 pub use pallet_consumers;
 pub use pallet_ecosystems;
 pub use pallet_points;
+pub use pallet_promos;
 
 /// An index to a block.
 pub type BlockNumber = u32;
@@ -303,8 +304,18 @@ impl pallet_points::Config for Runtime {
 	type PointSymbolLimit = ConstU32<125>;
 	type ImageLimit = ConstU32<{ u32::MAX }>;
 	type DescriptionLimit = ConstU32<2000>;
+	type PointManagerLimit = ConstU32<200>;
 }
 
+impl pallet_promos::Config for Runtime {
+	type RuntimeEvent = RuntimeEvent;
+	type PromoLimit = ConstU32<{ u32::MAX }>;
+	type PromoValueLimit = ConstU32<{ u32::MAX }>;
+	type PromoSymbolLimit = ConstU32<125>;
+	type ImageLimit = ConstU32<{ u32::MAX }>;
+	type DescriptionLimit = ConstU32<2000>;
+	type Moment = Timestamp;
+}
 
 // Create the runtime by composing the FRAME pallets that were previously configured.
 construct_runtime!(
@@ -321,6 +332,7 @@ construct_runtime!(
 		Consumers: pallet_consumers,
 		Ecosystems: pallet_ecosystems,
 		Points: pallet_points,
+		Promos: pallet_promos,
 	}
 );
 

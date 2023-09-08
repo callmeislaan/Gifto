@@ -9,12 +9,13 @@ pub struct Point<T: Config> {
 	point_symbol: PointSymbol<T>,
 	avatar: Image<T>,
 	description: Description<T>,
+	manager: PointManager<T>,
 }
 
 impl<T: Config> Point<T> {
 
-	pub fn new(brand_hash: T::Hash, point_symbol: PointSymbol<T>, avatar: Image<T>, description: Description<T>) -> Self {
-		Point { brand_hash, point_symbol, avatar , description}
+	pub fn new(brand_hash: T::Hash, point_symbol: PointSymbol<T>, avatar: Image<T>, description: Description<T>, manager: PointManager<T>) -> Self {
+		Point { brand_hash, point_symbol, avatar , description, manager}
 	}
 
 	pub fn brand_hash(&self) -> T::Hash {
@@ -31,6 +32,10 @@ impl<T: Config> Point<T> {
 
 	pub fn description(&self) -> Description<T> {
 		self.description.clone()
+	}
+
+	pub fn manager(&self) -> PointManager<T> {
+		self.manager.clone()
 	}
 
 	pub fn set_avatar(&mut self, avatar: Image<T>) {
