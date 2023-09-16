@@ -1,0 +1,57 @@
+@import url("https://fonts.googleapis.com/css2?family=Open+Sans&family=Roboto:wght@400;500;700&display=swap");
+:root {
+  scrollbar-width: none;
+  /* --jet: hsla(260, 3%, 23%, 1); */
+  --cultured: hsla(60, 5%, 96%, 1);
+  --bud-green: hsla(115, 40%, 51%, 1);
+  --fern-green: hsla(115, 24%, 38%, 1);
+
+  /* CSS HSL */
+  --jet: hsla(330, 2%, 21%, 1);
+  --beaver: hsla(26, 26%, 56%, 1);
+  --antique-bronze: hsla(53, 33%, 33%, 1);
+  --battleship-grey: hsla(97, 3%, 53%, 1);
+  --gainsboro: hsla(213, 26%, 86%, 1);
+  --rust: hsla(19, 57%, 44%, 1);
+
+  font-size: 16px;
+}
+input:focus {
+  outline: none;
+}
+
+body {
+  margin: 0 auto;
+  min-height: 100vh;
+  /* max-width: 960px; */
+  font-family: "Open Sans";
+  background-image: url("../public/bedge-grunge.png");
+  background-attachment: fixed;
+}
+
+body::-webkit-scrollbar {
+  display: none;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+#page-wrap {
+  margin: 0 auto;
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+}
+
+#page-wrap > div {
+  max-width: 960px;
+  margin: 0 auto 1.5rem;
+}
+
+.hide {
+  max-height: 0 !important;
+  max-width: 0 !important;
+  padding: 0 !important;
+  margin: 0 !important;
+}

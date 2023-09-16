@@ -1,0 +1,47 @@
+.card-list {
+  display: flex;
+  flex-direction: column;
+  flex-wrap: wrap;
+  gap: 1rem;
+  margin-bottom: 5em;
+  margin: 1rem 2rem;
+  justify-content: space-between;
+}
+.single-card-content {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+.single-card-checkout {
+  height: fit-content;
+  margin-top: 3em;
+}
+.card-frame {
+  border: 1px solid var(--jet);
+  border-radius: var(--radius);
+  margin: 0.5rem;
+}
+
+.gift-card {
+  --card-width: 275px;
+  --radius: 0.75rem;
+  width: var(--card-width);
+  height: calc(var(--card-width) * 7 / 12);
+
+  border-radius: var(--radius);
+
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  align-items: center;
+  background-size: cover;
+  background-position: center;
+  color: var(--bud-green);
+}
+
+.gift-card * {
+  margin: 0;
+  padding: 0;
+}
+
+

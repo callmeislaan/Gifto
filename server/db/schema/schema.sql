@@ -1,0 +1,51 @@
+DROP TABLE IF EXISTS users CASCADE;
+DROP TABLE IF EXISTS gift_cards CASCADE;
+DROP TABLE IF EXISTS stores CASCADE;
+
+DROP TABLE IF EXISTS transactions; 
+
+CREATE TABLE users (
+  id SERIAL PRIMARY KEY NOT NULL,
+  points INTEGER,
+  first_name VARCHAR(255) NOT NULL,
+  last_name VARCHAR(255) NOT NULL,
+  password VARCHAR(255) NOT NULL,
+  email VARCHAR(255) NOT NULL,
+  isStoreOwner BOOLEAN,
+  city VARCHAR(255) NOT NULL,
+  created_at TIMESTAMP DEFAULT NOW(),
+  edited_at TIMESTAMP DEFAULT NOW()
+);
+
+CREATE TABLE stores (
+  id SERIAL PRIMARY KEY NOT NULL,
+  owner_id INTEGER REFERENCES users(id) ON DELETE CASCADE,
+  name VARCHAR(255) NOT NULL,
+  category VARCHAR NOT NULL,
+  description VARCHAR,
+  photo_url VARCHAR,
+  address VARCHAR ,
+  created_at TIMESTAMP DEFAULT NOW(),
+  edited_at TIMESTAMP DEFAULT NOW()
+);
+
+CREATE TABLE gift_cards (
+  id SERIAL PRIMARY KEY NOT NULL,
+  user_id INTEGER REFERENCES users(id) ON DELETE CASCADE,
+  balance INTEGER NOT NULL,
+  point_balance INTEGER DEFAULT 0,
+  redeem_at INTEGER DEFAULT 100,
+  store_id INTEGER REFERENCES stores(id) ON DELETE CASCADE,
+  created_at TIMESTAMP DEFAULT NOW(),
+  edited_at TIMESTAMP DEFAULT NOW()
+);
+
+
+CREATE TABLE transactions (
+  id SERIAL PRIMARY KEY NOT NULL,
+  giftcard_id INTEGER REFERENCES gift_cards(id),
+  store_id INTEGER REFERENCES stores(id) DEFAULT NULL,
+  amount INTEGER,
+  receiver_id INTEGER REFERENCES users(id) DEFAULT NULL,
+  created_at TIMESTAMP DEFAULT NOW()
+);

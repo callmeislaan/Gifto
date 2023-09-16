@@ -1,1 +1,3 @@
-/backend/target/
+/blockchain/target/
+/client/node_modules/
+/server/node_modules/
