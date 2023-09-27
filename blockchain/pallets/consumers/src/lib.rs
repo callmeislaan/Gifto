@@ -78,7 +78,6 @@ pub mod pallet {
             let bounded_avatar: Image<T> = avatar.clone().try_into().expect("avatar is too long");
             let new_id = who.clone();
 
-
             Ok(())
         }
 

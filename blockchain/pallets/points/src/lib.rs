@@ -110,7 +110,7 @@ pub mod pallet {
 
         #[pallet::call_index(1)]
         #[pallet::weight(10_000)]
-        pub fn send_point(origin: OriginFor<T>, receiver: T::AccountId, point_hash: T::Hash, value: u32) -> DispatchResult {
+        pub fn manager_send_point(origin: OriginFor<T>, receiver: T::AccountId, point_hash: T::Hash, value: u32) -> DispatchResult {
             let who = ensure_signed(origin)?;
 
             let point = Self::points(&point_hash).ok_or(<Error<T>>::PointNotFound)?;

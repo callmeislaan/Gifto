@@ -52,6 +52,7 @@ pub use pallet_consumers;
 pub use pallet_ecosystems;
 pub use pallet_points;
 pub use pallet_promos;
+pub use pallet_gcdex;
 
 /// An index to a block.
 pub type BlockNumber = u32;
@@ -310,11 +311,15 @@ impl pallet_points::Config for Runtime {
 impl pallet_promos::Config for Runtime {
 	type RuntimeEvent = RuntimeEvent;
 	type PromoLimit = ConstU32<{ u32::MAX }>;
-	type PromoValueLimit = ConstU32<{ u32::MAX }>;
 	type PromoSymbolLimit = ConstU32<125>;
 	type ImageLimit = ConstU32<{ u32::MAX }>;
 	type DescriptionLimit = ConstU32<2000>;
 	type Moment = Timestamp;
+	type PromoManagerLimit = ConstU32<200>;
+}
+
+impl pallet_gcdex::Config for Runtime {
+	type RuntimeEvent = RuntimeEvent;
 }
 
 // Create the runtime by composing the FRAME pallets that were previously configured.
@@ -333,6 +338,7 @@ construct_runtime!(
 		Ecosystems: pallet_ecosystems,
 		Points: pallet_points,
 		Promos: pallet_promos,
+		GCDex: pallet_gcdex,
 	}
 );
 

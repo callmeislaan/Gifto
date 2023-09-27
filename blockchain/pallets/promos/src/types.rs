@@ -12,15 +12,18 @@ pub struct Promo<T: Config> {
 	start_date: SystemTime<T>,
 	end_date: SystemTime<T>,
 	maximum_quantity: u32,
-	
+	manager: PromoManager<T>,
+	quantity_left: u32,
 }
 
 // (Tên Promo, Mã Promo, Avatar, Mô tả, Điều kiện, Số lượng tối đa, Ngày bắt đầu, ngày kết thúc)
 impl<T: Config> Promo<T> {
 
 	pub fn new(brand_hash: T::Hash, promo_symbol: PromoSymbol<T>, avatar: Image<T>, 
-		description: Description<T>, start_date: SystemTime<T>, end_date: SystemTime<T>, maximum_quantity: u32) -> Self {
-		Promo { brand_hash, promo_symbol, avatar , description, start_date, end_date, maximum_quantity}
+		description: Description<T>, start_date: SystemTime<T>, end_date: SystemTime<T>, maximum_quantity: u32,
+		manager: PromoManager<T>) -> Self {
+		let quantity_left = maximum_quantity;
+		Promo { brand_hash, promo_symbol, avatar , description, start_date, end_date, maximum_quantity, manager, quantity_left}
 	}
 
 	pub fn brand_hash(&self) -> T::Hash {
@@ -51,8 +54,20 @@ impl<T: Config> Promo<T> {
 		self.maximum_quantity.clone()
 	}
 
+	pub fn manager(&self) -> PromoManager<T> {
+		self.manager.clone()
+	}
+
+	pub fn quantity_left(&self) -> u32 {
+		self.quantity_left.clone()
+	}
+
 	pub fn set_avatar(&mut self, avatar: Image<T>) {
 		self.avatar = avatar;
+	}
+
+	pub fn calculate_quantity_left(&mut self, send_value: u32) {
+		self.quantity_left = self.quantity_left - send_value;
 	}
 
 }

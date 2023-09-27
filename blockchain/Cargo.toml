@@ -6,6 +6,7 @@ members = [
     "pallets/ecosystems",
     "pallets/points",
     "pallets/promos",
+    "pallets/gcdex",
     "runtime",
 ]
 [profile.release]
