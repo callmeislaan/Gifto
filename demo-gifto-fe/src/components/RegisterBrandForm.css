@@ -1,0 +1,18 @@
+form {
+    padding: 10px;
+    margin: 20px auto;
+    width: 700px;
+    background-color: aliceblue;
+}
+
+table {
+    display: flex;
+    justify-items: center;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+}
+
+table tr {
+    padding: 10px;
+}
