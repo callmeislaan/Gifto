@@ -1,68 +1,131 @@
 import './RegisterBrandForm.css';
 import InputBanner from './InputBanner';
 import InputRow from './InputRow';
-import Button from './Button';
 import { useState } from 'react';
-
+import ButtonRow from './ButtonRow';
+import { useSubstrateState } from '../substrate-lib'
+import { bnFromHex } from '@polkadot/util';
+import { web3FromSource } from '@polkadot/extension-dapp'
 
 export default function InputForm() {
-    const [symbol, setSymbol] = useState(null);
-    const [name, setName] = useState(null);
-    const [avatar, setAvatar] = useState(null);
-    const [description, setDescription] = useState(null);
-    const [domain, setDomain] = useState(null);
+    const [symbol, setSymbol] = useState("");
+    const [name, setName] = useState("");
+    const [avatar, setAvatar] = useState("");
+    const [description, setDescription] = useState("");
+    const [domain, setDomain] = useState("");
+    const { api, currentAccount } = useSubstrateState()
+    // const [unsub, setUnsub] = useState(null)
 
-    function handleCancel() {
+    function handleCancel(e) {
+        e.preventDefault();
     }
 
-    function handleReset() {
-        setSymbol(null);
-        setName(null);
-        setAvatar(null);
-        setDescription(null);
-        setDomain(null);
+    function handleReset(e) {
+        e.preventDefault();
+        setSymbol("");
+        setName("");
+        setAvatar("");
+        setDescription("");
+        setDomain("");
     }
 
-    function handleCreate() {
-        console.log(symbol);
-        console.log(name);
-        console.log(avatar);
-        console.log(description);
-        console.log(domain);
+
+    const txResHandler = ({ events = [], status, txHash }) => {
+        // Loop through Vec<EventRecord> to display all events
+        events.forEach(({ _, event: { data, method, section } }) => {
+            if ((section + ":" + method) === 'system:ExtrinsicFailed') {
+                // extract the data for this event
+                const [dispatchError, dispatchInfo] = data;
+                console.log(`dispatchinfo: ${dispatchInfo}`)
+                let errorInfo;
+
+                // decode the error
+                if (dispatchError.isModule) {
+                    // for module errors, we have the section indexed, lookup
+                    // (For specific known errors, we can also do a check against the
+                    // api.errors.<module>.<ErrorName>.is(dispatchError.asModule) guard)
+                    const mod = dispatchError.asModule
+                    const error = api.registry.findMetaError(
+                        new Uint8Array([mod.index.toNumber(), bnFromHex(mod.error.toHex().slice(0, 4)).toNumber()])
+                    )
+                    let message = `${error.section}.${error.name}${Array.isArray(error.docs) ? `(${error.docs.join('')})` : error.docs || ''
+                        }`
+
+                    errorInfo = `${message}`;
+                    console.log(`Error-info::${JSON.stringify(error)}`)
+                } else {
+                    // Other, CannotLookup, BadOrigin, no extra info
+                    errorInfo = dispatchError.toString();
+                }
+                alert(`😞 Transaction Failed! ${section}.${method}::${errorInfo}`)
+            } else if (section + ":" + method === 'system:ExtrinsicSuccess') {
+                alert(`❤️️ Transaction successful! tx hash: ${txHash} , Block hash: ${status.asFinalized.toString()}`)
+            }
+        });
     }
+
+    const txErrHandler = err => {
+        alert(`😞 Transaction Failed: ${err.toString()}`);
+    }
+
+
+    const getFromAcct = async () => {
+        const {
+            address,
+            meta: { source, isInjected },
+        } = currentAccount
+
+        if (!isInjected) {
+            return [currentAccount]
+        }
+
+        // currentAccount is injected from polkadot-JS extension, need to return the addr and signer object.
+        // ref: https://polkadot.js.org/docs/extension/cookbook#sign-and-send-a-transaction
+        const injector = await web3FromSource(source)
+        return [address, { signer: injector.signer }]
+    }
+
+
+    const handleCreate = async (e) => {
+        e.preventDefault();
+        const txExecute = api.tx.brands.createNewBrand(symbol, name, description, avatar, domain)
+
+        const fromAcct = await getFromAcct()
+        // transformed can be empty parameters
+
+        await txExecute
+            .signAndSend(...fromAcct, txResHandler)
+            .catch(txErrHandler)
+
+        // setUnsub(() => unsub)
+    }
+
 
 
     return (
-        <form onSubmit={handleCreate}>
+        <form className='register-form' onSubmit={handleCreate}>
             <table>
                 <tr>
                     <InputBanner value="Register Brand" />
                 </tr>
                 <tr>
-                    <InputRow name="Symbol" onChange={setSymbol} />
+                    <InputRow name="Symbol" value={symbol} onChange={setSymbol} />
                 </tr>
                 <tr>
-                    <InputRow name="Name" onChange={setName} />
+                    <InputRow name="Name" value={name} onChange={setName} />
                 </tr>
                 <tr>
-                    <InputRow name="Avatar" onChange={setAvatar} />
+                    <InputRow name="Avatar" value={avatar} onChange={setAvatar} />
                 </tr>
                 <tr>
-                    <InputRow name="Description" onChange={setDescription} />
+                    <InputRow name="Description" value={description} onChange={setDescription} />
                 </tr>
                 <tr>
-                    <InputRow name="Domain" onChange={setDomain} />
+                    <InputRow name="Domain" value={domain} onChange={setDomain} />
                 </tr>
                 <tr>
-                    <td>
-                        <Button value="Cancel" onClick={handleCancel} />
-                    </td>
-                    <td>
-                        <Button value="Reset" onClick={handleReset} />
-                    </td>
-                    <td>
-                        <Button value="Create" onClick={handleCreate} />
-                    </td>
+                    <ButtonRow value1="Cancel" value2="Reset" value3="Create"
+                        handle1={handleCancel} handle2={handleReset} handle3={handleCreate} />
                 </tr>
             </table>
         </form>

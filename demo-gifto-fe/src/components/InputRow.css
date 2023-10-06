@@ -1,7 +1,27 @@
+.input-row table, tr, td {
+    padding: 0;
+    margin: 0;
+    width: 100%;
+}
+
 .input-row-name {
     text-align: left;
 }
 
-table tr {
+.input-row table tr {
     text-align: left;
+}
+
+.input-row input {
+    width: 500px;
+    height: 30px;
+}
+
+.input-row-name {
+    font-size: large;
+}
+
+.input-row input {
+    border: 1px solid black;
+    border-radius: 5px;
 }

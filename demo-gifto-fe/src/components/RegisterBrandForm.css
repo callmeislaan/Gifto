@@ -1,11 +1,11 @@
-form {
+.register-form {
     padding: 10px;
     margin: 20px auto;
     width: 700px;
     background-color: aliceblue;
 }
 
-table {
+.register-form table {
     display: flex;
     justify-items: center;
     flex-direction: column;
@@ -13,6 +13,6 @@ table {
     align-items: center;
 }
 
-table tr {
+.register-form table tr {
     padding: 10px;
 }
