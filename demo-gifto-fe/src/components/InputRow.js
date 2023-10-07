@@ -8,7 +8,7 @@ export default function InputRow({ name, value, onChange }) {
                     <span className='input-row-name'>{name}</span>
                 </td>
                 <td>
-                    <input type="text" onChange={(e) => onChange(e.target.value)} value={value}/>
+                    <input className='input' type="text" onChange={(e) => onChange(e.target.value)} value={value}/>
                 </td>
             </tr>
 

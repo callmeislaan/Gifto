@@ -1,24 +1,24 @@
 import './RegisterForm.css';
 import InputBanner from './InputBanner';
 import InputRow from './InputRow';
-import { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import ButtonRow from './ButtonRow';
 import { useSubstrateState } from '../substrate-lib'
 import { bnFromHex } from '@polkadot/util';
 import { web3FromSource } from '@polkadot/extension-dapp'
 import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
+import SelectRow from './SelectRow';
 
 export default function InputForm() {
     const [symbol, setSymbol] = useState("");
     const [name, setName] = useState("");
     const [avatar, setAvatar] = useState("");
     const [description, setDescription] = useState("");
-    const [domain, setDomain] = useState("");
     const { api, currentAccount } = useSubstrateState();
     const [create, setCreate] = useState("Create");
     const [unsub, setUnsub] = useState(null);
-    // const [unsub, setUnsub] = useState(null)
+    const [manager, setManager] = useState([]);
 
     function handleCancel(e) {
         e.preventDefault();
@@ -30,21 +30,14 @@ export default function InputForm() {
         setName("");
         setAvatar("");
         setDescription("");
-        setDomain("");
+        setSelected(null);
     }
 
 
     const txResHandler = ({ events = [], status, txHash }) => {
-        
-        console.log(events);
-        console.log(status);
-        console.log(txHash);
-        console.log(status.isInBlock);
-        console.log(status.isFinalized);
         if (status.isFinalized) {
             setCreate("Create");
             toast(`❤️️ Transaction successful!`);
-            console.log(unsub);
             unsub()
             setUnsub(null)
             return;
@@ -77,12 +70,10 @@ export default function InputForm() {
                 }
                 setCreate("Create");
                 toast(`😞 Transaction Failed! ${section}.${method}::${errorInfo}`);
-                console.log(unsub);
                 unsub()
                 setUnsub(null)
                 return;
             } else if (section + ":" + method === 'system:ExtrinsicSuccess') {
-                console.log("event");
                 return;
             }
         });
@@ -93,7 +84,6 @@ export default function InputForm() {
         unsub()
         setUnsub(null)
         toast(`😞 Transaction Failed: ${err.toString()}`);
-        console.log('Transaction Failed');
     }
 
 
@@ -116,14 +106,12 @@ export default function InputForm() {
 
     const handleCreate = async (e) => {
         e.preventDefault();
-        if (create !== "Create")  {
+        if (create !== "Create") {
             return;
         }
         setCreate("Creating");
 
-        console.log("symbol: " + symbol);
-
-        const txExecute = api.tx.brands.createNewBrand(symbol, name, avatar, description, domain)
+        const txExecute = await api.tx.points.createNewPoint(symbol, selected.value, name, avatar, description)
 
         const fromAcct = await getFromAcct()
         // transformed can be empty parameters
@@ -131,12 +119,25 @@ export default function InputForm() {
         const unsubHandle = await txExecute
             .signAndSend(...fromAcct, txResHandler)
             .catch(txErrHandler)
-        console.log(unsub)
-        console.log('----')
         setUnsub(() => unsubHandle)
-        console.log(unsub)
     }
 
+    const [brands, setBrands] = useState([]);
+    const [selected, setSelected] = useState(null);
+    useEffect(async () => {
+        setSelected(null);
+        let initBrand = [];
+        console.log(brands);
+        const datas = await api.query.brands.brandOwner(currentAccount.address);
+        datas.value.forEach(async (hash) => {
+            const brand = await api.query.brands.brands(hash.toString());
+            initBrand.push({
+                value: hash,
+                label: brand.toHuman().symbol
+            });
+        });
+        setBrands(initBrand);
+    }, [currentAccount]);
 
 
     return (
@@ -144,7 +145,7 @@ export default function InputForm() {
             <form className='register-form' onSubmit={handleCreate}>
                 <table>
                     <tr>
-                        <InputBanner value="Register Brand" />
+                        <InputBanner value="Register Point" />
                     </tr>
                     <tr>
                         <InputRow name="Symbol" value={symbol} onChange={setSymbol} />
@@ -159,7 +160,7 @@ export default function InputForm() {
                         <InputRow name="Description" value={description} onChange={setDescription} />
                     </tr>
                     <tr>
-                        <InputRow name="Domain" value={domain} onChange={setDomain} />
+                        <SelectRow name="Brand" options={brands} value={selected} onChange={setSelected} />
                     </tr>
                     <tr>
                         <ButtonRow value1="Cancel" value2="Reset" value3={create}
