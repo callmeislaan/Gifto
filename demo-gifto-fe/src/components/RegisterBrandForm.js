@@ -9,7 +9,7 @@ import { web3FromSource } from '@polkadot/extension-dapp'
 import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 
-export default function InputForm() {
+export default function RegisterBrandForm() {
     const [symbol, setSymbol] = useState("");
     const [name, setName] = useState("");
     const [avatar, setAvatar] = useState("");
@@ -18,7 +18,6 @@ export default function InputForm() {
     const { api, currentAccount } = useSubstrateState();
     const [create, setCreate] = useState("Create");
     const [unsub, setUnsub] = useState(null);
-    // const [unsub, setUnsub] = useState(null)
 
     function handleCancel(e) {
         e.preventDefault();

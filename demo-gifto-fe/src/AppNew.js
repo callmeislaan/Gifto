@@ -10,7 +10,8 @@ import 'semantic-ui-css/semantic.min.css'
 import { SubstrateContextProvider, useSubstrateState } from './substrate-lib'
 import AccountSelector from './AccountSelector'
 // import RegisterBrandForm from './components/RegisterBrandForm'
-import RegisterPointForm from './components/RegisterPointForm'
+// import RegisterPointForm from './components/RegisterPointForm'
+import RegisterPromosForm from './components/RegisterPromosForm'
 
 function Main() {
   const { apiState, apiError, keyringState } = useSubstrateState()
@@ -51,7 +52,8 @@ function Main() {
       <Sticky context={contextRef}>
         <AccountSelector />
       </Sticky>
-      <RegisterPointForm />
+      <RegisterPromosForm />
+      {/* <RegisterPointForm /> */}
       {/* <RegisterBrandForm /> */}
     </div>
   )

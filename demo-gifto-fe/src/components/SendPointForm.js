@@ -10,10 +10,14 @@ import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import SelectRow from './SelectRow';
 import ManyInputRow from './ManyInputRow';
+import InputDateRow from './InputDateRow';
+
+
+
 const { decodeAddress, encodeAddress } = require('@polkadot/keyring');
 const { hexToU8a, isHex } = require('@polkadot/util');
 
-export default function RegisterPointForm() {
+export default function RegisterPromosForm() {
     const [symbol, setSymbol] = useState("");
     const [name, setName] = useState("");
     const [avatar, setAvatar] = useState("");
@@ -21,6 +25,9 @@ export default function RegisterPointForm() {
     const { api, currentAccount } = useSubstrateState();
     const [create, setCreate] = useState("Create");
     const [unsub, setUnsub] = useState(null);
+    const [startDate, setStartDate] = useState(null);
+    const [endDate, setEndDate] = useState(null);
+    const [maximumQuantity, setMaximumQuantity] = useState(1000);
 
     function handleCancel(e) {
         e.preventDefault();
@@ -34,6 +41,9 @@ export default function RegisterPointForm() {
         setDescription("");
         setSelected(null);
         setManager([]);
+        setStartDate(null);
+        setEndDate(null);
+        setMaximumQuantity(1000);
     }
 
 
@@ -118,7 +128,10 @@ export default function RegisterPointForm() {
             return;
         }
         setCreate("Creating");
-        const txExecute = await api.tx.points.createNewPoint(symbol, selected.value.toString(), name, avatar, description, manager)
+        const txExecute = await api.tx.promos.createNewPromo(symbol, selected.value.toString(), name, 
+                        avatar, description, Math.floor(new Date(startDate).getTime() / 1000)
+                        , Math.floor(new Date(endDate).getTime() / 1000)
+                        , maximumQuantity, manager)
 
         const fromAcct = await getFromAcct()
         // transformed can be empty parameters
@@ -188,7 +201,7 @@ export default function RegisterPointForm() {
             <form className='register-form'>
                 <table>
                     <tr>
-                        <InputBanner value="Register Point" />
+                        <InputBanner value="Register Promotion" />
                     </tr>
                     <tr>
                         <InputRow name="Symbol" value={symbol} onChange={setSymbol} />
@@ -201,6 +214,15 @@ export default function RegisterPointForm() {
                     </tr>
                     <tr>
                         <InputRow name="Description" value={description} onChange={setDescription} />
+                    </tr>
+                    <tr>
+                        <InputDateRow name="Start date" value={startDate} onChange={setStartDate} />
+                    </tr>
+                    <tr>
+                        <InputDateRow name="End date" value={endDate} onChange={setEndDate} />
+                    </tr>
+                    <tr>
+                        <InputRow name="Maximum quantity" value={maximumQuantity} onChange={setMaximumQuantity} />
                     </tr>
                     <tr>
                         <SelectRow name="Brand" options={brands} value={selected} onChange={setSelected} />
